@@ -20,8 +20,8 @@ import java.util.*;
 
 import ghidra.app.util.Option;
 import ghidra.app.util.bin.ByteProvider;
-import ghidra.app.util.importer.MemoryConflictHandler;
 import ghidra.app.util.importer.MessageLog;
+import ghidra.app.util.opinion.Loader;
 import ghidra.app.util.opinion.AbstractLibrarySupportLoader;
 import ghidra.app.util.opinion.LoadSpec;
 import ghidra.framework.model.DomainObject;
@@ -77,11 +77,12 @@ public class SMSLoaderLoader extends AbstractLibrarySupportLoader {
 	}
 
 	@Override
-	protected void load(ByteProvider provider, LoadSpec loadSpec, List<Option> options,
-			Program program, MemoryConflictHandler handler, TaskMonitor monitor, MessageLog log)
+	protected void load(Program program, Loader.ImporterSettings importerSettings)
 			throws CancelledException, IOException {
 
-		// Load the bytes from 'provider' into the 'program'.
+		ByteProvider provider = importerSettings.provider();
+		TaskMonitor monitor = importerSettings.monitor();
+		MessageLog log = importerSettings.log();
 		
 		//
 		// The Sega Master System/GG Memory Map
@@ -136,16 +137,17 @@ public class SMSLoaderLoader extends AbstractLibrarySupportLoader {
 
 	@Override
 	public List<Option> getDefaultOptions(ByteProvider provider, LoadSpec loadSpec,
-			DomainObject domainObject, boolean isLoadIntoProgram) {
+			DomainObject domainObject, boolean isLoadIntoProgram, boolean optionsOnly) {
 		List<Option> list =
-			super.getDefaultOptions(provider, loadSpec, domainObject, isLoadIntoProgram);
+			super.getDefaultOptions(provider, loadSpec, domainObject, isLoadIntoProgram, optionsOnly);
 
 		return list;
 	}
 
 	@Override
-	public String validateOptions(ByteProvider provider, LoadSpec loadSpec, List<Option> options) {
+	public String validateOptions(ByteProvider provider, LoadSpec loadSpec, List<Option> options,
+			Program program) {
 
-		return super.validateOptions(provider, loadSpec, options);
+		return super.validateOptions(provider, loadSpec, options, program);
 	}
 }
